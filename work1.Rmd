@@ -1,0 +1,36 @@
+---
+title: "AirPollution"
+author: "Nirvana"
+date: "12 October 2018"
+output: html_document
+---
+Lin_Reg_R["Capped_Losses"] <- ifelse(Lin_Reg_R["Losses"] > 1204, 1204, ifelse(Lin_Reg_R["Losses"] < 32, 32, Lin_Reg_R["Losses"]))
+
+
+Lin_Reg_R["Gender_dummy"] <- ifelse(Lin_Reg_R["Gender"] =='M', 1,0)
+
+Lin_Reg_R["Marrige_dummy"] <- ifelse(Lin_Reg_R["Married"] =='Married', 1,0)
+
+Lin_Reg_R ["Fuel_dummy"] <-ifelse(Lin_Reg_R["Fuel.Type"] =='P', 1,0)
+
+summary(Lin_Reg_R)
+
+tempdata<-aggregate(Lin_Reg_R$Capped_Losses, list(Age=Lin_Reg_R$Age), mean)
+
+head(tempdata)
+plot(tempdata$Age, tempdata$x, type="o")
+
+#### Writing Macro funcrtion
+BiVar <- function(var){
+  nd<-data.frame(tempvar= Lin_Reg_R[,var], Capped_Losses=Lin_Reg_R$Capped_Losses)
+  
+  tempData<-aggregate(nd$Capped_Losses, list(Age=nd$tempvar), mean)
+  print(tempData)
+  
+  plot(tempData$Age, tempData$X, type="o")
+
+}
+
+###correlation in r
+cor(Lin_Reg_R$Capped_Losses, Lin_Reg_R$Age)
+cor(Lin_Reg_R[sapply(Lin_Reg_R,is.numeric)])
