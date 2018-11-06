@@ -13,7 +13,6 @@ table(RawData$Temp)
 
 RawData$WS #is a character type need conversion
 RawData$WS<-as.numeric(RawData$WS)
-RawData$WS
 summary(RawData$WS)
 
 #comverting the data to numberic
@@ -26,4 +25,42 @@ RawData$Ozone<-as.numeric(RawData$Ozone)
 RawData$SO2<-as.numeric(RawData$SO2)
 RawData$CO<-as.numeric(RawData$CO)
 
+table(RawData$From)
 
+#install.packages("stringr")
+packages(stringr)
+
+#creating a new data set for making making bigger changes
+dataset<-subset(RawData, !(is.na(RawData$From)))
+
+#getting time of the day
+dataset$From=str_sub(dataset$From, start=12, end=16)
+
+#convering the data form canonical to numerical
+uniNewForm=unique(dataset$From)
+uniNewForm
+listValue=c();
+for(i in 1:96){
+  listValue[i]<-i
+}
+listValue
+
+dataset$From<- factor(dataset$From, uniNewForm, listValue)
+
+
+#doing the same for the column 2
+for(i in 2:96){
+  listValue[i-1]<-i
+}
+listValue[96]<-1
+listValue[97]<-3  #handling the 04:27 value that does not fall 
+#into any category by binning it with 04:30 category
+listValue
+
+dataset$To=str_sub(RawData$To, start=12, end=16)
+uniNewTo<-unique(dataset$To)
+uniNewTo
+dataset$To<- factor(dataset$To, uniNewTo, listValue)
+
+#finally adding the data column to the dataset
+dataset$date<-str_sub(RawData$From, start =0, end=11)
