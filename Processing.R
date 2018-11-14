@@ -1,4 +1,10 @@
-View(RawData)
+#RH ->relaive humidiy
+#SR ->solar radition
+#vWS ->vertile wind speed
+#ws->wind speed
+#PM10 ->patulicae matter
+#AT ->air pollution
+(RawData)
 summary(RawData)
 
 #coverting the character to  integer
@@ -64,3 +70,22 @@ dataset$To<- factor(dataset$To, uniNewTo, listValue)
 
 #finally adding the data column to the dataset
 dataset$date<-str_sub(RawData$From, start =0, end=11)
+
+#futher processing################################################33
+#visiuizaton of dataset
+
+summary(dataset)
+summary(dataset$PM10)
+hist(dataset$PM10)
+mean(dataset$PM10)
+seq
+#dnorm(dataset$PM10, mean = (dataset$PM10), sd(dataset$PM10))
+line(dataset$PM10, )
+hist(dataset$AT)
+
+regressor = lm(formula = AT ~ BP,
+               data = dataset)
+summary(regressor)
+plot(regressor)
+
+
