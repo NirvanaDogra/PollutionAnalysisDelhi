@@ -75,13 +75,42 @@ dataset$date<-str_sub(RawData$From, start =0, end=11)
 #visiuizaton of dataset
 
 summary(dataset)
+
+
+#visualization of AT varibles
+summary(dataset$AT)
+hist(dataset$AT,freq=FALSE)
+lines(density(dataset$AT, na.rm=TRUE), col="red", lwd=2)
+
+#visualization of BP varibles
+summary(dataset$BP)
+hist(dataset$BP,freq=FALSE)
+lines(density(dataset$BP, na.rm=TRUE), col="red", lwd=2)
+
+#visualization of PM10 varibles
 summary(dataset$PM10)
-hist(dataset$PM10)
-mean(dataset$PM10)
-seq
-#dnorm(dataset$PM10, mean = (dataset$PM10), sd(dataset$PM10))
-line(dataset$PM10, )
-hist(dataset$AT)
+hist(dataset$PM10,freq=FALSE)
+lines(density(dataset$PM10, na.rm=TRUE), col="red", lwd=2)
+
+#visualization function
+basicObservationOF<- function(x){
+  summary(x)
+  hist(x,freq=FALSE)
+  lines(density(x, na.rm=TRUE), col="red", lwd=2)
+}
+
+basicObservationOF(dataset$PM2.5)
+basicObservationOF(dataset$RH)
+basicObservationOF(dataset$SR)
+basicObservationOF(dataset$WD)
+basicObservationOF(dataset$WS)
+basicObservationOF(dataset$VWS)
+basicObservationOF(dataset$Benzene)
+basicObservationOF(dataset$Toluene)
+basicObservationOF(dataset$NH3)
+basicObservationOF(dataset$NO)
+basicObservationOF(dataset$NO2)
+
 
 regressor = lm(formula = AT ~ BP,
                data = dataset)
