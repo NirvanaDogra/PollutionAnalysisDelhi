@@ -76,31 +76,33 @@ dataset$date<-str_sub(RawData$From, start =0, end=11)
 
 summary(dataset)
 
-
-#visualization of AT varibles
-summary(dataset$AT)
-hist(dataset$AT,freq=FALSE)
-lines(density(dataset$AT, na.rm=TRUE), col="red", lwd=2)
-
-#visualization of BP varibles
-summary(dataset$BP)
-hist(dataset$BP,freq=FALSE)
-lines(density(dataset$BP, na.rm=TRUE), col="red", lwd=2)
-
-#visualization of PM10 varibles
-summary(dataset$PM10)
-hist(dataset$PM10,freq=FALSE)
-lines(density(dataset$PM10, na.rm=TRUE), col="red", lwd=2)
-
 #visualization function
 basicObservationOF<- function(x){
-  summary(x)
+    summary(x)
   hist(x,freq=FALSE)
   lines(density(x, na.rm=TRUE), col="red", lwd=2)
 }
+summary(dataset$AT)
+basicObservationOF(dataset$AT)
 
+#the processing for BP
+summary(dataset$BP)
+basicObservationOF(dataset$BP)
+
+#the processing of PM10
+summary(dataset$PM10)
+basicObservationOF(dataset$PM10)
+#observation 1.The graph is right skewed and requires normalization 2.THe most frequent values are 100-400
+
+#the processing of PM2.5
+summary(dataset$PM2.5)
 basicObservationOF(dataset$PM2.5)
+#1.values are right skewed snd requires transformation 2.THe values are in 50-100 range. 3. There are some values at 600 and is an outlier
+
+#the process ofRH
+summary(dataset$RH)
 basicObservationOF(dataset$RH)
+#1. the graph as similar mean and
 basicObservationOF(dataset$SR)
 basicObservationOF(dataset$WD)
 basicObservationOF(dataset$WS)
@@ -110,6 +112,11 @@ basicObservationOF(dataset$Toluene)
 basicObservationOF(dataset$NH3)
 basicObservationOF(dataset$NO)
 basicObservationOF(dataset$NO2)
+basicObservationOF(dataset$NOx)
+basicObservationOF(dataset$Ozone)
+basicObservationOF(dataset$SO2)
+basicObservationOF(dataset$CO)
+
 
 
 regressor = lm(formula = AT ~ BP,
