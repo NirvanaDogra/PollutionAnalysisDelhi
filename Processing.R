@@ -81,14 +81,19 @@ summary(dataset)
 #visualization function
 basicObservationOF<- function(x){
     summary(x)
-  hist(x,freq=FALSE)
+  hist(x,freq=FALSE, xlab ="Attribute")
   lines(density(x, na.rm=TRUE), col="red", lwd=2)
 }
 
 #plotting the trend in accordance of of date VS attribute
 library("ggplot2")
 dateVSAttribute<- function(x){
-  qplot(dataset$date, x)
+  qplot(dataset$date, x, xlab = "Date", ylab = "Range")
+}
+
+library("ggplot2")
+TimeVSAttribute<- function(x){
+  qplot(dataset$From, x, xlab= "Time", ylab = "Range")
 }
 
 ###############################################################################
@@ -97,6 +102,9 @@ basicObservationOF(dataset$AT)
 #left skewed
 dateVSAttribute(dataset$AT)
 #the general trend is decreasing wih date
+TimeVSAttribute(dataset$AT)
+#this makes sense as the value inc form 32-70 that is the day time
+
 ################################################################################
 
 
@@ -106,6 +114,7 @@ summary(dataset$BP)
 basicObservationOF(dataset$BP)
 dateVSAttribute(dataset$BP)
 #the general trensd increases with date
+TimeVSAttribute(dataset$BP)
 #################################################################################
 
 
@@ -118,6 +127,9 @@ basicObservationOF(dataset$PM10)
 
 dateVSAttribute(dataset$PM10)
 #no obervation can be derived but we can say there are sudden changes in values through the day
+
+TimeVSAttribute(dataset$PM10)
+#stagnent
 #################################################################################
 
 
@@ -128,6 +140,9 @@ basicObservationOF(dataset$PM2.5)
 #1.values are right skewed snd requires transformation 2.THe values are in 50-100 range. 3. There are some values at 600 and is an outlier
 dateVSAttribute(dataset$PM2.5)
 #no observation can be derived is usually low below 120 but in some case there are spikes
+
+TimeVSAttribute(dataset$PM2.5)
+#stagnent
 ################################################################################
 
 
@@ -141,6 +156,9 @@ basicObservationOF(dataset$RH)
 dateVSAttribute(dataset$RH)
 #no observations remains consistant through out the month
 #no outliers
+
+TimeVSAttribute(dataset$RH)
+#drop during the after noon at 12ish
 #################################################################################
 
 
@@ -151,6 +169,9 @@ basicObservationOF(dataset$SR)
 
 dateVSAttribute(dataset$SR)
 #the general trend tell us a decrease in the radition with passsing of days
+
+TimeVSAttribute(dataset$SR)
+#peaking during the noon
 #################################################################################
 
 
@@ -163,6 +184,9 @@ dateVSAttribute(dataset$WD)
 #South - 180 degrees West - 270 degrees North - 360 degrees 
 #the winds usually flows in the direction between 0-200 i.e North(Muzzarfnagar)---east(Gurugram)---south(Noida)----south-west(Dwarka) 
 #and rarely in North-west
+
+TimeVSAttribute(dataset$WD)
+#stagnet
 ###################################################################################
 
 
@@ -174,6 +198,9 @@ basicObservationOF(dataset$WS)
 
 dateVSAttribute(dataset$WS)
 #the genaral speed 1.5m/s
+
+TimeVSAttribute(dataset$WS)
+#some what inc in noon
 ##################################################################################
 
 
@@ -191,6 +218,9 @@ basicObservationOF(dataset$Benzene)
 #right skewed
 dateVSAttribute(dataset$Benzene)
 #no observation
+
+TimeVSAttribute(dataset$Benzene)
+#during the evening time the range is less maybe because industris dont work at night
 ##################################################################################
 
 
@@ -201,6 +231,8 @@ basicObservationOF(dataset$Toluene)
 
 dateVSAttribute(dataset$Toluene)
 #no observation
+TimeVSAttribute(dataset$Toluene)
+#during the evening time the range is less maybe because industris dont work at night
 ##################################################################################
 
 
@@ -211,6 +243,8 @@ basicObservationOF(dataset$NH3)
 #a little right skewed
 dateVSAttribute(dataset$NH3)
 #genarally increasing with time
+TimeVSAttribute(dataset$NH3)
+#stagnent
 ##################################################################################
 
 
@@ -220,6 +254,9 @@ basicObservationOF(dataset$NO)
 #right skewed
 dateVSAttribute(dataset$NO)
 #no observation
+
+TimeVSAttribute(dataset$NO)
+
 ##################################################################################
 
 
@@ -229,6 +266,9 @@ basicObservationOF(dataset$NO2)
 
 dateVSAttribute(dataset$NO2)
 #no observation values between 30-150
+
+TimeVSAttribute(dataset$NO2)
+#random
 ##################################################################################
 
 
@@ -239,6 +279,8 @@ basicObservationOF(dataset$NOx)
 
 dateVSAttribute(dataset$NOx)
 #no observation values between 10-200
+
+TimeVSAttribute(dataset$NOx)
 ###################################################################################
 
 
@@ -251,6 +293,9 @@ basicObservationOF(dataset$Ozone)
 
 dateVSAttribute(dataset$Ozone)
 #no observation
+
+TimeVSAttribute(dataset$Ozone)
+#onzone frmation inc
 ##################################################################################
 
 
@@ -262,6 +307,8 @@ basicObservationOF(dataset$SO2)
 
 dateVSAttribute(dataset$SO2)
 #the values between 20-40
+
+TimeVSAttribute(dataset$SO2)
 ###################################################################################
 
 
@@ -272,6 +319,8 @@ basicObservationOF(dataset$CO)
 #right skewed
 
 dateVSAttribute(dataset$CO)
+
+TimeVSAttribute(dataset$CO)
 #################################################################################
 
 
@@ -329,11 +378,64 @@ correlationBetween(dataset$AT, dataset$CO)
 
 
 
+####################################################Final conclusion##################################################
+# Remove VWS
+# 
+#
+#
+#
+#
+#######################################################################################################################
 
 
+#transformation ---
+
+transformedDataObservations<-function(x){
+  boxplot(x, log10(x), sqrt(x), col = c("red", "blue", "green"), names = c("Original", "Log10(X)", "sqrt"))
+  print("Summary of Attribute");
+  print(summary(x))
+  print("Summary of Log10(X)");
+  print(summary(log10(x)))
+  print("Summary of Sqrt")
+  print(summary(sqrt(x)))
+}
+par(mfrow=c(1,1))
+transformedDataObservations(dataset$AT)
+#the log transformationlook to be the best option in this case
+transformedDataObservations(dataset$BP)
+#transforamtion not required but still transforming got the ease cal
+transformedDataObservations(dataset$PM10)
+transformedDataObservations(dataset$PM2.5)
+transformedDataObservations(dataset$RH)
+transformedDataObservations(dataset$WD)
+transformedDataObservations(dataset$WS)
+transformedDataObservations(dataset$Benzene)
+transformedDataObservations(dataset$Toluene)
+transformedDataObservations(dataset$NH3)
+transformedDataObservations(dataset$NO2)
+transformedDataObservations(dataset$Ozone)
+transformedDataObservations(dataset$SO2)
+transformedDataObservations(dataset$CO)
 
 
+transformedDataObservations(dataset$BP)value<-rbind(dataset$AT, dataset$BP)
+par(mfrow=c(3,1))
+hist(dataset$AT)
+hist(dataset$BP)
+hist(dataset$PM10)
+rnorm()
+x=c(1,10,100,1000,10000)
+plot(log10(x))
 
+ggplot2.density(dataset, groupName=)
+
+hist(dataset$PM10, freq=FALSE)
+lines(density(dataset$PM10, na.rm=TRUE), col="red", lwd=2)
+
+hist(dataset$PM10, log10(dataset$PM10))
+
+
+melt()
 
 
 regressor = lm(formula = AT ~ PM10,
