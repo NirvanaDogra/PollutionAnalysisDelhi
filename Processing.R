@@ -339,8 +339,6 @@ correlationBetween<-function(x,y){
   
 }
 
-
-
 #results shouwed the follows -
 
 
@@ -391,56 +389,104 @@ correlationBetween(dataset$AT, dataset$CO)
 #transformation ---
 
 transformedDataObservations<-function(x){
+  par(mfrow=c(4,1))
   boxplot(x, log10(x), sqrt(x), col = c("red", "blue", "green"), names = c("Original", "Log10(X)", "sqrt"))
+  
+  hist(x, xlab = "x", freq = FALSE)
+  lines(density(x, na.rm=TRUE), col="red", lwd=2)
+  
+  hist(log(x), xlab = "log(x)", freq = FALSE)
+  lines(density(log(x), na.rm=TRUE), col="red", lwd=2)
+  
+  hist(sqrt(x), xlab = "sqrt(x)", freq = FALSE)
+  lines(density(sqrt(x), na.rm=TRUE), col="red", lwd=2)
+  
   print("Summary of Attribute");
   print(summary(x))
+  
   print("Summary of Log10(X)");
   print(summary(log10(x)))
+  
   print("Summary of Sqrt")
   print(summary(sqrt(x)))
 }
-par(mfrow=c(1,1))
-transformedDataObservations(dataset$AT)
+
+
+newdata<-dataset[ -c(4,9,10,11,12,13,14,16,17) ]
+summary(newdata)
+
+newdata<-na.omit(newdata)
+length(newdata$AT)
+
+library("GGally")
+library("ggplot2")
+ggcorr(newdata)
+
+
+
+transformedDataObservations(newdata$AT)
 #the log transformationlook to be the best option in this case
-transformedDataObservations(dataset$BP)
-#transforamtion not required but still transforming got the ease cal
-transformedDataObservations(dataset$PM10)
-transformedDataObservations(dataset$PM2.5)
-transformedDataObservations(dataset$RH)
-transformedDataObservations(dataset$WD)
-transformedDataObservations(dataset$WS)
-transformedDataObservations(dataset$Benzene)
-transformedDataObservations(dataset$Toluene)
-transformedDataObservations(dataset$NH3)
-transformedDataObservations(dataset$NO2)
-transformedDataObservations(dataset$Ozone)
-transformedDataObservations(dataset$SO2)
-transformedDataObservations(dataset$CO)
+#treating outliers for AT
+par(mfrow= c(1,1))
+plot(newdata$AT)
+boxplot.stats(newdata$AT)$out
+boxplot(newdata$AT)
+
+newdata$AT[newdata$AT<12]<-mean(newdata$AT)
+transformedDataObservations(newdata$AT)
+boxplot.stats(log(newdata$AT))$out
 
 
-transformedDataObservations(dataset$BP)value<-rbind(dataset$AT, dataset$BP)
-par(mfrow=c(3,1))
-hist(dataset$AT)
-hist(dataset$BP)
-hist(dataset$PM10)
-rnorm()
-x=c(1,10,100,1000,10000)
-plot(log10(x))
-
-ggplot2.density(dataset, groupName=)
-
-hist(dataset$PM10, freq=FALSE)
-lines(density(dataset$PM10, na.rm=TRUE), col="red", lwd=2)
-
-hist(dataset$PM10, log10(dataset$PM10))
 
 
-melt()
+transformedDataObservations(newdata$PM10)
+#transformation using log
+boxplot.stats((newdata$PM10))$out
+boxplot(log(newdata$PM10))
+min(newdata$PM10)
 
 
-regressor = lm(formula = AT ~ PM10,
-               data = dataset)
-summary(regressor)
-plot(regressor)
 
 
+transformedDataObservations(newdata$PM2.5)
+boxplot.stats(log(newdata$PM2.5))$out
+#transformation using log
+
+transformedDataObservations(newdata$NH3)
+#transforation usng log
+boxplot.stats(log(newdata$NH3))$out
+
+transformedDataObservations(newdata$NOx)
+#transfroamtrion using log
+boxplot.stats(log(newdata$NOx))$out
+
+
+transformedDataObservations(newdata$Ozone)
+#transforarion using log
+boxplot.stats(log(newdata$Ozone))$out
+
+transformedDataObservations(newdata$SO2)
+#transforatiom using log
+boxplot.stats(log(newdata$SO2))$out
+
+transformedDataObservations(newdata$CO)
+boxplot.stats((newdata$CO))$out
+par(mfrow=c(1,1))
+
+
+library(caTools)
+set.seed(123)   #  set seed to ensure you always have same random numbers generated
+sample = sample.split(newdata,SplitRatio = 0.75) 
+train =subset(newdata,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
+test=subset(newdata, sample==FALSE)
+
+class(newdata$date)
+plot(train$date, train$PM2.5)
+
+
+lct <- Sys.getlocale("LC_TIME"); 
+Sys.setlocale("LC_TIME", "C")
+val<-as.Date(train$date,"%d-%m-%y")
+val
+class(val)
+plot(val, train$AT)
