@@ -136,9 +136,10 @@ TimeVSAttribute(dataset$PM10)
 #################################################################################
 #the processing of PM2.5
 summary(dataset$PM2.5)
-basicObservationOF(dataset$PM2.5)
-#1.values are right skewed snd requires transformation 2.THe values are in 50-100 range. 3. There are some values at 600 and is an outlier
+#values are right skewed snd requires transformation 2.THe values are in 50-100 range. 3. There are some values at 600 and is an outlier
 dateVSAttribute(dataset$PM2.5)
+basicObservationOF(dataset$PM2.5)
+#1.
 #no observation can be derived is usually low below 120 but in some case there are spikes
 
 TimeVSAttribute(dataset$PM2.5)
@@ -193,7 +194,7 @@ TimeVSAttribute(dataset$WD)
 ##################################################################################
 summary(dataset$WS)
 basicObservationOF(dataset$WS)
-#1. Right skewed
+#1. Right Skewed
 
 
 dateVSAttribute(dataset$WS)
@@ -254,7 +255,6 @@ basicObservationOF(dataset$NO)
 #right skewed
 dateVSAttribute(dataset$NO)
 #no observation
-
 TimeVSAttribute(dataset$NO)
 
 ##################################################################################
@@ -476,11 +476,15 @@ par(mfrow=c(1,1))
 
 library(caTools)
 set.seed(123)   #  set seed to ensure you always have same random numbers generated
-sample = sample.split(newdata,SplitRatio = 0.75) 
-train =subset(newdata,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
-test=subset(newdata, sample==FALSE)
+length(dataset)
 
+#sample = sample.split(newdata,SplitRatio = 0.75) 
+#train =subset(newdata,sample ==TRUE) # creates a training dataset named train1 with rows which are marked as TRUE
+#test=subset(newdata, sample==FALSE)
+train=head(newdata,1971) #ie 75%
+test=tail(newdata,657)
 class(newdata$date)
+
 plot(train$date, train$PM2.5)
 
 
@@ -490,3 +494,60 @@ val<-as.Date(train$date,"%d-%m-%y")
 val
 class(val)
 plot(val, train$AT)
+
+
+#############ARIMA#######################
+#install.packages("forecast")
+#install.packages("tseries")
+library(tseries)
+library(forecast)
+library(ab)
+ddata<-decompose(dataset$AT,"multiplicative")
+summary(newdata$date)
+
+myts <- ts(newdata$PM10, frequency=365)
+
+ddata<-decompose(myts, "multiplicative")
+plot(ddata)
+plot(newdata$PM10)
+abline(reg=lm(newdata$PM10 ~ as.Date(newdata$date, "%d-%m-%y")))
+reg=lm(newdata$PM10 ~ as.Date(newdata$date, "%d-%m-%y"))
+print(reg)
+plot(reg)
+
+cycle(newdata$PM10)
+
+install.packages("zoo")
+library(zoo)
+myzoo<- zoo(train$AT)
+myModel<-auto.arima(myzoo, D=1)
+myModel
+#auto.arima(x, ic="aic", trace=TRUE)
+myforecast<-forecast(myModel, level=c(95), h=96*3)
+plot(myforecast)
+
+fit <- Arima(WWWusage,order=c(3,1,0))
+
+timeSeriesImplement<-function(x){
+  myts <- ts(x, frequency=96)
+  ddata<-decompose(myts, "multiplicative")
+  plot(ddata)
+  myModel<-auto.arima(myts, D=1)
+  myModel
+  #auto.arima(x, ic="aic", trace=TRUE)
+  myforecast<-forecast(myModel, level=c(95), h=96*4)
+  plot(myforecast,col="red")
+  
+}
+lenarModel()
+
+timeSeriesImplement(log(train$AT))
+  timeSeriesImplement(log(train$PM10))
+timeSeriesImplement(log(train$PM2.5))
+timeSeriesImplement(log(train$RH))
+timeSeriesImplement(log(train$SR))
+timeSeriesImplement(log(train$NH3))
+timeSeriesImplement(log(train$NOx))
+timeSeriesImplement(log(train$Ozone))
+timeSeriesImplement(log(train$SO2))
+timeSeriesImplement(log(train$CO))
